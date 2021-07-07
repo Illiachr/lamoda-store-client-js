@@ -8,6 +8,7 @@ const CLS_NAMES = {
 };
 
 const eventHandlers = [];
+const dbURL = "./db.json";
 
 // utils
 const disableScroll = () => {
@@ -30,6 +31,16 @@ const enableScroll = () => {
       top: document.body.dbScrollY
     });
   `;
+};
+
+// db request
+const getData = async (url) => {
+  const res = await fetch(url);
+  if (res.ok) {
+    return res.json();
+  } else {
+    throw new Error(res.error);
+  }
 };
 
 // component methotds
@@ -88,8 +99,13 @@ const cartPopup = () => {
     .addEventListener("click", cartBtnClickHandler);
 };
 
-// init
+window.addEventListener("hashchange", (e) => {
+  const hash = location.hash.substring(1);
+  console.log(hash);
+  getData(dbURL).then((data) => console.log(data));
+});
 
+// init
 (() => {
   headerActions();
   cartPopup();
