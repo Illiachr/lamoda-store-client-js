@@ -11,6 +11,18 @@ const eventHandlers = [];
 const dbURL = "./db.json";
 
 // utils
+const setUID = () => "_" + Math.random().toString(36).substr(2, 9);
+
+const createElem = (tag, options = {}) => {
+  const elem = document.createElement(tag);
+  elem.id = setUID();
+  elem.classList = options.cln || HELPER.CLN_CIRCLE;
+  Object.keys(options).forEach((key) => {
+    elem.style[key] = options[key];
+  });
+  return elem;
+};
+
 const disableScroll = () => {
   const widthScroll = window.innerWidth - document.body.offsetWidth;
   document.body.dbScrollY = window.scrollY;
@@ -33,13 +45,31 @@ const enableScroll = () => {
   `;
 };
 
+// model
+const getItemsByKey = (items, val, key = "category") =>
+  items.filter((item) => item[key] === val);
+
 // db request
 const getData = async (url) => {
   const res = await fetch(url);
   if (res.ok) {
     return res.json();
   } else {
-    throw new Error(res.error);
+    throw new Error(`${res.status}: ${res.statusText}`);
+  }
+};
+
+const getGoods = async (handler, val, url = dbURL) => {
+  try {
+    const goodsAll = await getData(url);
+
+    if (!val) {
+      return handler(goods);
+    }
+
+    handler(getItemsByKey(goodsAll, val));
+  } catch (err) {
+    console.warn(err);
   }
 };
 
@@ -99,14 +129,23 @@ const cartPopup = () => {
     .addEventListener("click", cartBtnClickHandler);
 };
 
-window.addEventListener("hashchange", (e) => {
+const goodsPage = () => {
+  const isGoodsPage = location.href.includes("goods.html");
+  if (!isGoodsPage) {
+    return;
+  }
   const hash = location.hash.substring(1);
-  console.log(hash);
-  getData(dbURL).then((data) => console.log(data));
-});
+  getGoods(() => {}, hash);
+
+  window.addEventListener("hashchange", (e) => {
+    const hash = location.hash.substring(1);
+    getGoods(() => {}, hash);
+  });
+};
 
 // init
 (() => {
   headerActions();
   cartPopup();
+  goodsPage();
 })();
