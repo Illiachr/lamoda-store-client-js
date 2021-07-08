@@ -1,3 +1,5 @@
+const CART = "consumerCart";
+
 const CLS_NAMES = {
   CITY_BTN: ".header__city-button",
   CART: ".cart",
@@ -19,52 +21,55 @@ const CARD_CLS = {
   SIZES_BTN: ".card-good__sizes",
   COLOR_LIST: ".card-good__color-list",
   SIZES_LIST: ".card-good__sizes-list",
+  SELECT: ".card-good__select",
   SELECT_WRAPPER: ".card-good__select__wrapper",
   SELECT_LIST: ".card-good__select-list",
-  SELECT_ITEM: ".card-good__select-item",
   BTN_BUY: ".card-good__buy",
+  SELECT_ITEM: "card-good__select-item",
   SELECT_OPEN: "card-good__select__open"
 };
 
+const cart = [];
 const eventHandlers = [];
 const dbURL = "./db.json";
 const currency = "&#8372;";
 
-const cart = [
-  {
-    id: "CD32D6F8",
-    category: "women",
-    brand: "New Balance",
-    name: "Леггинсы NB Essentials Botanical Legging",
-    cost: 2999,
-    sizes: ["40/42", "42/44", "44/46", "46/48", "48/50"],
-    photo: "NE007EWMSTP9_14530060_1_v1.jpg",
-    preview: "NE007EWMSTP9_14530060_1_v2.jpg"
-  },
-  {
-    id: "B7F325C0",
-    category: "women",
-    brand: "Adidas",
-    name: "Костюм спортивный W TS CO ENERGIZ",
-    cost: 7999,
-    sizes: ["40/42", "42/44", "46/48", "48/50", "52/54"],
-    photo: "AD002EWLUHE3_13165507_1_v1.jpg",
-    preview: "AD002EWLUHE3_13165507_1_v2.jpg"
-  },
-  {
-    id: "5481519A",
-    category: "women",
-    brand: "Befree",
-    name: "Топ Exclusive online",
-    cost: 599,
-    color: ["Черный", "Белый", "Хаки", "Бирюзовый", "Фиолетовый", "Розовый"],
-    sizes: ["42", "44", "46", "48"],
-    photo: "MP002XW06VXS_14089904_1.jpg",
-    preview: "MP002XW06VXS_14089904_2.jpg"
-  }
-];
+// const cart = [
+//   {
+//     id: "CD32D6F8",
+//     category: "women",
+//     brand: "New Balance",
+//     name: "Леггинсы NB Essentials Botanical Legging",
+//     cost: 2999,
+//     sizes: ["40/42", "42/44", "44/46", "46/48", "48/50"],
+//     photo: "NE007EWMSTP9_14530060_1_v1.jpg",
+//     preview: "NE007EWMSTP9_14530060_1_v2.jpg"
+//   },
+//   {
+//     id: "B7F325C0",
+//     category: "women",
+//     brand: "Adidas",
+//     name: "Костюм спортивный W TS CO ENERGIZ",
+//     cost: 7999,
+//     sizes: ["40/42", "42/44", "46/48", "48/50", "52/54"],
+//     photo: "AD002EWLUHE3_13165507_1_v1.jpg",
+//     preview: "AD002EWLUHE3_13165507_1_v2.jpg"
+//   },
+//   {
+//     id: "5481519A",
+//     category: "women",
+//     brand: "Befree",
+//     name: "Топ Exclusive online",
+//     cost: 599,
+//     color: ["Черный", "Белый", "Хаки", "Бирюзовый", "Фиолетовый", "Розовый"],
+//     sizes: ["42", "44", "46", "48"],
+//     photo: "MP002XW06VXS_14089904_1.jpg",
+//     preview: "MP002XW06VXS_14089904_2.jpg"
+//   }
+// ];
 
 // utils
+
 const setUID = () => "_" + Math.random().toString(36).substr(2, 9);
 
 const checkLocation = (val) => location.href.includes(val);
@@ -77,7 +82,7 @@ const setTitle = (val) => {
   return elem.textContent;
 };
 
-const createElem = (tag, cln, options = {}) => {
+const createElem = (tag, cln, stylesProps = {}, dataProps = {}) => {
   const elem = document.createElement(tag);
   elem.id = setUID();
   if (Array.isArray(cln)) {
@@ -85,9 +90,17 @@ const createElem = (tag, cln, options = {}) => {
   } else {
     elem.classList = cln;
   }
-  Object.keys(options).forEach((key) => {
-    elem.style[key] = options[key];
-  });
+  if (stylesProps !== "_" && stylesProps.lehgth) {
+    Object.keys(stylesProps).forEach((key) => {
+      elem.style[key] = stylesProps[key];
+    });
+  }
+
+  if (dataProps !== "_" && dataProps.lehgth) {
+    Object.keys(dataProps).forEach((key) => {
+      elem.dataset[key] = dataProps[key];
+    });
+  }
   return elem;
 };
 
@@ -143,8 +156,8 @@ const getGoods = async (handler, val, url = dbURL) => {
 
 const getOne = async (handler, val, url = dbURL) => {
   try {
-    const goodsAll = await getData(url);
-    handler(getItemsByKey(goodsAll, val, "id"));
+    const data = await getData(url);
+    handler(getItemsByKey(data, val, "id"));
   } catch (err) {
     console.warn(err);
   }
@@ -238,6 +251,7 @@ const cartPopup = () => {
     .addEventListener("click", cartBtnClickHandler);
 };
 
+// goodsPage
 const goodsPage = () => {
   if (!checkLocation("goods.html")) {
     return;
@@ -254,28 +268,116 @@ const goodsPage = () => {
   window.addEventListener("hashchange", addItems);
 };
 
+// itemPage
+const selectClickHandler = (e, select) => {
+  const { target } = e;
+
+  const selectBtn = target.closest(CARD_CLS.SELECT);
+  if (selectBtn) {
+    selectBtn.classList.toggle(CARD_CLS.SELECT_OPEN);
+  }
+
+  const selectItem = target.closest(`.${CARD_CLS.SELECT_ITEM}`);
+  if (selectItem) {
+    selectChoise = select.querySelector(CARD_CLS.SELECT);
+    selectChoise.textContent = selectItem.textContent;
+    selectChoise.dataset.idx = selectItem.dataset.idx;
+    selectChoise.classList.remove(CARD_CLS.SELECT_OPEN);
+  }
+};
+
+const createSelectItem = (val, idx) => {
+  const item = createElem("li", CARD_CLS.SELECT_ITEM);
+  item.textContent = val;
+  item.dataset.idx = idx;
+  return item;
+};
+const addSelectOptions = (selector, data) => {
+  const selectList = document.querySelector(selector);
+  data.forEach((val, idx) => {
+    const option = createSelectItem(val, idx);
+    selectList.append(option);
+  });
+};
+
+const renderItemCard = ([{ id, photo, cost, brand, name, color, sizes }]) => {
+  const itemBrand = document.querySelector(CARD_CLS.ITEM_BRAND);
+  const itemTitle = document.querySelector(CARD_CLS.ITEM_TITLE);
+  const itemImage = document.querySelector(CARD_CLS.ITEM_IMG);
+  const itemPrice = document.querySelector(CARD_CLS.ITEM_PRICE);
+  const colorSelectBtn = document.querySelector(CARD_CLS.COLOR_BTN);
+  const sizesSelectBtn = document.querySelector(CARD_CLS.SIZES_BTN);
+  const selectWrappers = document.querySelectorAll(CARD_CLS.SELECT_WRAPPER);
+  const addToCart = document.querySelector(CARD_CLS.BTN_BUY);
+
+  itemImage.src = `goods-image/${photo}`;
+  itemImage.alt = `${brand} ${name}`;
+  itemBrand.textContent = brand;
+  itemTitle.textContent = name;
+  itemPrice.innerHTML = `${cost}&nbsp;${currency}`;
+
+  if (color) {
+    colorSelectBtn.textContent = color[0];
+    colorSelectBtn.dataset.idx = 0;
+    addSelectOptions(CARD_CLS.COLOR_LIST, color);
+  } else {
+    colorSelectBtn.style.display = "none";
+  }
+
+  if (sizes) {
+    sizesSelectBtn.textContent = sizes[0];
+    sizesSelectBtn.dataset.idx = 0;
+    addSelectOptions(CARD_CLS.SIZES_LIST, sizes);
+  } else {
+    colorSelectBtn.style.display = "none";
+  }
+
+  selectWrappers.forEach((select) =>
+    select.addEventListener("click", (e) => selectClickHandler(e, select))
+  );
+
+  addToCart.addEventListener("click", () => {
+    const colorId = colorSelectBtn.dataset.idx || null;
+    const sizeId = sizesSelectBtn.dataset.idx || null;
+    const cartItemIdx = cart.findIndex(
+      (item) =>
+        item.id === id && item.colorId === colorId && item.sizeId === sizeId
+    );
+    if (cartItemIdx >= 0 && cart.length > 0) {
+      cart[cartItemIdx].count++;
+    } else {
+      const cartItem = {
+        id,
+        colorId,
+        sizeId,
+        count: 1
+      };
+      cart.push(cartItem);
+    }
+    localStorage.setItem(CART, JSON.stringify(cart));
+  });
+};
+
 const itemPage = () => {
   if (!checkLocation("card-good.html")) {
     return;
   }
 
-  const renderItemCard = ([{ id, photo, cost, brand, name, sizes }]) => {
-    const itemBrand = document.querySelector(CARD_CLS.ITEM_BRAND);
-    const itemTitle = document.querySelector(CARD_CLS.ITEM_TITLE);
-    const itemImage = document.querySelector(CARD_CLS.ITEM_IMG);
-    const itemImage = document.querySelector(CARD_CLS.ITEM_PRICE);
-
-    itemImage.src = `goods-image/${photo}`;
-    itemImage.alt = `${brand} ${name}`;
-    itemBrand.textContent = brand;
-    itemTitle.textContent = name;
-  };
-
   getOne(renderItemCard, getLocationHash());
 };
 
 // init
+
+const getCart = () => {
+  const storedCartJSON = localStorage.getItem(CART);
+  if (storedCartJSON) {
+    JSON.parse(storedCartJSON).forEach((item) => cart.push(item));
+  }
+  console.log(cart);
+};
+
 (() => {
+  getCart();
   headerActions();
   cartPopup();
   goodsPage();
