@@ -10,12 +10,72 @@ const CLS_NAMES = {
   GOODS_ITEM: "goods__item"
 };
 
+const CARD_CLS = {
+  ITEM_BRAND: ".card-good__brand",
+  ITEM_TITLE: ".card-good__title",
+  ITEM_IMG: ".card-good__image",
+  ITEM_PRICE: ".card-good__price",
+  COLOR_BTN: ".card-good__color",
+  SIZES_BTN: ".card-good__sizes",
+  COLOR_LIST: ".card-good__color-list",
+  SIZES_LIST: ".card-good__sizes-list",
+  SELECT_WRAPPER: ".card-good__select__wrapper",
+  SELECT_LIST: ".card-good__select-list",
+  SELECT_ITEM: ".card-good__select-item",
+  BTN_BUY: ".card-good__buy",
+  SELECT_OPEN: "card-good__select__open"
+};
+
 const eventHandlers = [];
 const dbURL = "./db.json";
 const currency = "&#8372;";
 
+const cart = [
+  {
+    id: "CD32D6F8",
+    category: "women",
+    brand: "New Balance",
+    name: "Леггинсы NB Essentials Botanical Legging",
+    cost: 2999,
+    sizes: ["40/42", "42/44", "44/46", "46/48", "48/50"],
+    photo: "NE007EWMSTP9_14530060_1_v1.jpg",
+    preview: "NE007EWMSTP9_14530060_1_v2.jpg"
+  },
+  {
+    id: "B7F325C0",
+    category: "women",
+    brand: "Adidas",
+    name: "Костюм спортивный W TS CO ENERGIZ",
+    cost: 7999,
+    sizes: ["40/42", "42/44", "46/48", "48/50", "52/54"],
+    photo: "AD002EWLUHE3_13165507_1_v1.jpg",
+    preview: "AD002EWLUHE3_13165507_1_v2.jpg"
+  },
+  {
+    id: "5481519A",
+    category: "women",
+    brand: "Befree",
+    name: "Топ Exclusive online",
+    cost: 599,
+    color: ["Черный", "Белый", "Хаки", "Бирюзовый", "Фиолетовый", "Розовый"],
+    sizes: ["42", "44", "46", "48"],
+    photo: "MP002XW06VXS_14089904_1.jpg",
+    preview: "MP002XW06VXS_14089904_2.jpg"
+  }
+];
+
 // utils
 const setUID = () => "_" + Math.random().toString(36).substr(2, 9);
+
+const checkLocation = (val) => location.href.includes(val);
+const getLocationHash = () => location.hash.substring(1);
+const setTitle = (val) => {
+  const elem = document.querySelector(`[href*="#${val}"]`);
+  if (!elem) {
+    return "";
+  }
+  return elem.textContent;
+};
 
 const createElem = (tag, cln, options = {}) => {
   const elem = document.createElement(tag);
@@ -81,12 +141,21 @@ const getGoods = async (handler, val, url = dbURL) => {
   }
 };
 
+const getOne = async (handler, val, url = dbURL) => {
+  try {
+    const goodsAll = await getData(url);
+    handler(getItemsByKey(goodsAll, val, "id"));
+  } catch (err) {
+    console.warn(err);
+  }
+};
+
 // component methotds
 
 const goodInfo = ({ id, preview, cost, brand, name, sizes }) => `
   <article class="good">
     <a class="good__link-img" href="card-good.html#${id}">
-      <img class="good__img" src="goods-image/${preview}" alt="">
+      <img class="good__img" src="goods-image/${preview}" alt="${brand} ${name}">
     </a>
     <div class="good__description">
       <p class="good__price">${cost} ${currency}</p>
@@ -169,18 +238,14 @@ const cartPopup = () => {
     .addEventListener("click", cartBtnClickHandler);
 };
 
-const setTitle = (val) =>
-  val === "men" ? "Мужчинам" : val === "women" ? "Женщинам" : "Детям";
-
 const goodsPage = () => {
-  const isGoodsPage = location.href.includes("goods.html");
-  if (!isGoodsPage) {
+  if (!checkLocation("goods.html")) {
     return;
   }
   const goodsTitle = document.querySelector(CLS_NAMES.GOODS_TITLE);
 
   const addItems = () => {
-    const hash = location.hash.substring(1);
+    const hash = getLocationHash();
     goodsTitle.textContent = setTitle(hash);
     getGoods(addGoods, hash);
   };
@@ -189,9 +254,30 @@ const goodsPage = () => {
   window.addEventListener("hashchange", addItems);
 };
 
+const itemPage = () => {
+  if (!checkLocation("card-good.html")) {
+    return;
+  }
+
+  const renderItemCard = ([{ id, photo, cost, brand, name, sizes }]) => {
+    const itemBrand = document.querySelector(CARD_CLS.ITEM_BRAND);
+    const itemTitle = document.querySelector(CARD_CLS.ITEM_TITLE);
+    const itemImage = document.querySelector(CARD_CLS.ITEM_IMG);
+    const itemImage = document.querySelector(CARD_CLS.ITEM_PRICE);
+
+    itemImage.src = `goods-image/${photo}`;
+    itemImage.alt = `${brand} ${name}`;
+    itemBrand.textContent = brand;
+    itemTitle.textContent = name;
+  };
+
+  getOne(renderItemCard, getLocationHash());
+};
+
 // init
 (() => {
   headerActions();
   cartPopup();
   goodsPage();
+  itemPage();
 })();
