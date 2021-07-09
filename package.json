@@ -1,5 +1,5 @@
 {
-  "name": "webpDev",
+  "name": "lomoda-client-js",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,8 +8,14 @@
     "build": "cross-env NODE_ENV=production webpack",
     "dev": "cross-env NODE_ENV=development webpack"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "html",
+    "js",
+    "css",
+    "scss",
+    "webpack"
+  ],
+  "author": "icdev@gmail.com",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.12.10",

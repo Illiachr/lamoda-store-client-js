@@ -36,7 +36,7 @@ const CARD_CLS = {
 
 const cart = [];
 const eventHandlers = [];
-const dbURL = "./db.json";
+const dbURL = "./db/db.json";
 const currency = "&#8372;";
 
 // utils
@@ -250,7 +250,7 @@ const selectClickHandler = (e, select) => {
 
   const selectItem = target.closest(`.${CARD_CLS.SELECT_ITEM}`);
   if (selectItem) {
-    selectChoise = select.querySelector(CARD_CLS.SELECT);
+    const selectChoise = select.querySelector(CARD_CLS.SELECT);
     selectChoise.textContent = selectItem.textContent;
     selectChoise.dataset.idx = selectItem.dataset.idx;
     selectChoise.classList.remove(CARD_CLS.SELECT_OPEN);
