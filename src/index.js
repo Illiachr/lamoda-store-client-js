@@ -2,137 +2,14 @@ import "./index.html";
 import "./goods.html";
 import "./card-good.html";
 import "./scss/style.scss";
+import { GOODS_ITEM } from "./modules/helpers/nameHelper";
 
 const CART = "consumerCart";
-
-const CLS_NAMES = {
-  CITY_BTN: ".header__city-button",
-  CART: ".cart",
-  CART_BTN: ".subheader__cart",
-  CART_OVERLAY: ".cart-overlay",
-  CART_OPEN: "cart-overlay-open",
-  CART_CLOSE: ".cart__btn-close",
-  GOODS_TITLE: ".goods__title",
-  GOODS_LIST: ".goods__list",
-  GOODS_ITEM: "goods__item"
-};
-
-const CARD_CLS = {
-  ITEM_BRAND: ".card-good__brand",
-  ITEM_TITLE: ".card-good__title",
-  ITEM_IMG: ".card-good__image",
-  ITEM_PRICE: ".card-good__price",
-  COLOR_BTN: ".card-good__color",
-  SIZES_BTN: ".card-good__sizes",
-  COLOR_LIST: ".card-good__color-list",
-  SIZES_LIST: ".card-good__sizes-list",
-  SELECT: ".card-good__select",
-  SELECT_WRAPPER: ".card-good__select__wrapper",
-  SELECT_LIST: ".card-good__select-list",
-  BTN_BUY: ".card-good__buy",
-  SELECT_ITEM: "card-good__select-item",
-  SELECT_OPEN: "card-good__select__open"
-};
 
 const cart = [];
 const eventHandlers = [];
 const dbURL = "./db/db.json";
 const currency = "&#8372;";
-
-// utils
-
-const setUID = () => "_" + Math.random().toString(36).substr(2, 9);
-
-const checkLocation = (val) => location.href.includes(val);
-const getLocationHash = () => location.hash.substring(1);
-const setTitle = (val) => {
-  const elem = document.querySelector(`[href*="#${val}"]`);
-  if (!elem) {
-    return "";
-  }
-  return elem.textContent;
-};
-
-const createElem = (tag, cln, stylesProps = {}, dataProps = {}) => {
-  const elem = document.createElement(tag);
-  elem.id = setUID();
-  if (Array.isArray(cln)) {
-    elem.classList = cln.join(" ");
-  } else {
-    elem.classList = cln;
-  }
-  if (stylesProps !== "_" && stylesProps.lehgth) {
-    Object.keys(stylesProps).forEach((key) => {
-      elem.style[key] = stylesProps[key];
-    });
-  }
-
-  if (dataProps !== "_" && dataProps.lehgth) {
-    Object.keys(dataProps).forEach((key) => {
-      elem.dataset[key] = dataProps[key];
-    });
-  }
-  return elem;
-};
-
-const disableScroll = () => {
-  const widthScroll = window.innerWidth - document.body.offsetWidth;
-  document.body.dbScrollY = window.scrollY;
-
-  document.body.style.cssText = `
-    top: ${-window.scrollY}px;
-    left: 0;
-    height: 100vh;
-    overflow: hidden;
-    padding-right: ${widthScroll}px;
-  `;
-  // position: fixed;
-};
-
-const enableScroll = () => {
-  document.body.style.cssText = `
-    window.scroll({
-      top: document.body.dbScrollY
-    });
-  `;
-};
-
-// model
-const getItemsByKey = (items, val, key = "category") =>
-  items.filter((item) => item[key] === val);
-
-// db request
-const getData = async (url) => {
-  const res = await fetch(url);
-  if (res.ok) {
-    return res.json();
-  } else {
-    throw new Error(`${res.status}: ${res.statusText}`);
-  }
-};
-
-const getGoods = async (handler, val, url = dbURL) => {
-  try {
-    const goodsAll = await getData(url);
-
-    if (!val) {
-      return handler(goods);
-    }
-
-    handler(getItemsByKey(goodsAll, val));
-  } catch (err) {
-    console.warn(err);
-  }
-};
-
-const getOne = async (handler, val, url = dbURL) => {
-  try {
-    const data = await getData(url);
-    handler(getItemsByKey(data, val, "id"));
-  } catch (err) {
-    console.warn(err);
-  }
-};
 
 // component methotds
 
@@ -157,7 +34,7 @@ const goodInfo = ({ id, preview, cost, brand, name, sizes }) => `
 `;
 
 const createGoodsItem = (data) => {
-  const item = createElem("li", { cls: CLS_NAMES.GOODS_ITEM });
+  const item = createElem("li", { cls: GOODS_ITEM });
   item.innerHTML = goodInfo(data);
   return item;
 };

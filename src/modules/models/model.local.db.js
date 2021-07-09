@@ -1,0 +1,36 @@
+// model
+export const getItemsByKey = (items, val, key = "category") =>
+  items.filter((item) => item[key] === val);
+
+// db request
+export const getData = async (url) => {
+  const res = await fetch(url);
+  if (res.ok) {
+    return res.json();
+  } else {
+    throw new Error(`${res.status}: ${res.statusText}`);
+  }
+};
+
+export const getGoods = async (handler, val, url = dbURL) => {
+  try {
+    const goodsAll = await getData(url);
+
+    if (!val) {
+      return handler(goods);
+    }
+
+    handler(getItemsByKey(goodsAll, val));
+  } catch (err) {
+    console.warn(err);
+  }
+};
+
+export const getOne = async (handler, val, url = dbURL) => {
+  try {
+    const data = await getData(url);
+    handler(getItemsByKey(data, val, "id"));
+  } catch (err) {
+    console.warn(err);
+  }
+};
