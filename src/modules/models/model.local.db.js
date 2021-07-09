@@ -12,6 +12,7 @@ export const getData = async url => {
   throw new Error(`${res.status}: ${res.statusText}`);
 };
 
+// eslint-disable-next-line consistent-return
 export const getGoods = async (handler, val, url = dbURL) => {
   try {
     const goodsAll = await getData(url);
