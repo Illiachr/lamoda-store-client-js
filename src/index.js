@@ -1,19 +1,20 @@
-import "./index.html";
-import "./goods.html";
-import "./card-good.html";
-import "./scss/style.scss";
-import { GOODS_ITEM } from "./modules/helpers/nameHelper";
+import './index.html';
+import './goods.html';
+import './card-good.html';
+import './scss/style.scss';
+import { GOODS_ITEM } from './modules/helpers/nameHelper';
 
-const CART = "consumerCart";
+const CART = 'consumerCart';
 
 const cart = [];
 const eventHandlers = [];
-const dbURL = "./db/db.json";
-const currency = "&#8372;";
+const currency = '&#8372;';
 
 // component methotds
 
-const goodInfo = ({ id, preview, cost, brand, name, sizes }) => `
+const goodInfo = ({
+  id, preview, cost, brand, name, sizes,
+}) => `
   <article class="good">
     <a class="good__link-img" href="card-good.html#${id}">
       <img class="good__img" src="goods-image/${preview}" alt="${brand} ${name}">
@@ -22,60 +23,60 @@ const goodInfo = ({ id, preview, cost, brand, name, sizes }) => `
       <p class="good__price">${cost} ${currency}</p>
       <h3 class="good__title">${brand} <span class="good__title__grey">/ ${name}</span></h3>
       ${
-        sizes
-          ? `<p class="good__sizes">Размеры (RUS): <span class="good__sizes-list">${sizes.join(
-              " "
-            )}</span></p>`
-          : ""
-      }
+  sizes ?
+    `<p class="good__sizes">Размеры (RUS): <span class="good__sizes-list">${sizes.join(
+      ' ',
+    )}</span></p>` :
+    ''
+}
       <a class="good__link" href="card-good.html#${id}">Подробнее</a>
     </div>
   </article>
 `;
 
-const createGoodsItem = (data) => {
-  const item = createElem("li", { cls: GOODS_ITEM });
+const createGoodsItem = data => {
+  const item = createElem('li', { cls: GOODS_ITEM });
   item.innerHTML = goodInfo(data);
   return item;
 };
 
-const addGoods = (goods) => {
+const addGoods = goods => {
   const goodsList = document.querySelector(CLS_NAMES.GOODS_LIST);
-  goodsList.textContent = "";
-  goods.forEach((item) => goodsList.append(createGoodsItem(item)));
+  goodsList.textContent = '';
+  goods.forEach(item => goodsList.append(createGoodsItem(item)));
 };
 
 const headerActions = () => {
   const headerCityBtn = document.querySelector(CLS_NAMES.CITY_BTN);
 
-  const headerClickHandler = (e) => {
+  const headerClickHandler = e => {
     const { target } = e;
 
     if (target === headerCityBtn) {
-      const location = prompt("Укадите Ваш город");
+      const location = prompt('Укадите Ваш город');
       if (location) {
         target.textContent = location;
-        localStorage.setItem("cunsomerLocation", location);
+        localStorage.setItem('cunsomerLocation', location);
       }
     }
   };
 
   headerCityBtn.textContent =
-    localStorage.getItem("cunsomerLocation") || "Ваш город?";
+    localStorage.getItem('cunsomerLocation') || 'Ваш город?';
 
   document
-    .querySelector(".header")
-    .addEventListener("click", headerClickHandler);
+    .querySelector('.header')
+    .addEventListener('click', headerClickHandler);
 };
 
 const cartPopup = () => {
   const cartOverlay = document.querySelector(CLS_NAMES.CART_OVERLAY);
 
-  const cartClickHandler = (e) => {
+  const cartClickHandler = e => {
     const { target } = e;
 
     const cartClick = eventHandlers.find(
-      (handler) => handler.type === "cartClick"
+      handler => handler.type === 'cartClick',
     );
 
     const closeBtn = target.closest(CLS_NAMES.CART_CLOSE);
@@ -86,22 +87,22 @@ const cartPopup = () => {
     }
   };
 
-  const cartBtnClickHandler = (e) => {
+  const cartBtnClickHandler = e => {
     cartOverlay.classList.add(CLS_NAMES.CART_OPEN);
-    cartOverlay.addEventListener("click", cartClickHandler);
-    unsub = () => cartOverlay.removeEventListener("click", cartClickHandler);
-    eventHandlers.push({ type: "cartClick", unsub });
+    cartOverlay.addEventListener('click', cartClickHandler);
+    unsub = () => cartOverlay.removeEventListener('click', cartClickHandler);
+    eventHandlers.push({ type: 'cartClick', unsub });
     disableScroll();
   };
 
   document
     .querySelector(CLS_NAMES.CART_BTN)
-    .addEventListener("click", cartBtnClickHandler);
+    .addEventListener('click', cartBtnClickHandler);
 };
 
 // goodsPage
 const goodsPage = () => {
-  if (!checkLocation("goods.html")) {
+  if (!checkLocation('goods.html')) {
     return;
   }
   const goodsTitle = document.querySelector(CLS_NAMES.GOODS_TITLE);
@@ -113,7 +114,7 @@ const goodsPage = () => {
   };
 
   addItems();
-  window.addEventListener("hashchange", addItems);
+  window.addEventListener('hashchange', addItems);
 };
 
 // itemPage
@@ -135,7 +136,7 @@ const selectClickHandler = (e, select) => {
 };
 
 const createSelectItem = (val, idx) => {
-  const item = createElem("li", CARD_CLS.SELECT_ITEM);
+  const item = createElem('li', CARD_CLS.SELECT_ITEM);
   item.textContent = val;
   item.dataset.idx = idx;
   return item;
@@ -148,7 +149,9 @@ const addSelectOptions = (selector, data) => {
   });
 };
 
-const renderItemCard = ([{ id, photo, cost, brand, name, color, sizes }]) => {
+const renderItemCard = ([{
+  id, photo, cost, brand, name, color, sizes,
+}]) => {
   const itemBrand = document.querySelector(CARD_CLS.ITEM_BRAND);
   const itemTitle = document.querySelector(CARD_CLS.ITEM_TITLE);
   const itemImage = document.querySelector(CARD_CLS.ITEM_IMG);
@@ -169,7 +172,7 @@ const renderItemCard = ([{ id, photo, cost, brand, name, color, sizes }]) => {
     colorSelectBtn.dataset.idx = 0;
     addSelectOptions(CARD_CLS.COLOR_LIST, color);
   } else {
-    colorSelectBtn.style.display = "none";
+    colorSelectBtn.style.display = 'none';
   }
 
   if (sizes) {
@@ -177,19 +180,16 @@ const renderItemCard = ([{ id, photo, cost, brand, name, color, sizes }]) => {
     sizesSelectBtn.dataset.idx = 0;
     addSelectOptions(CARD_CLS.SIZES_LIST, sizes);
   } else {
-    colorSelectBtn.style.display = "none";
+    colorSelectBtn.style.display = 'none';
   }
 
-  selectWrappers.forEach((select) =>
-    select.addEventListener("click", (e) => selectClickHandler(e, select))
-  );
+  selectWrappers.forEach(select => select.addEventListener('click', e => selectClickHandler(e, select)));
 
-  addToCart.addEventListener("click", () => {
+  addToCart.addEventListener('click', () => {
     const colorId = colorSelectBtn.dataset.idx || null;
     const sizeId = sizesSelectBtn.dataset.idx || null;
     const cartItemIdx = cart.findIndex(
-      (item) =>
-        item.id === id && item.colorId === colorId && item.sizeId === sizeId
+      item => item.id === id && item.colorId === colorId && item.sizeId === sizeId,
     );
     if (cartItemIdx >= 0 && cart.length > 0) {
       cart[cartItemIdx].count++;
@@ -198,7 +198,7 @@ const renderItemCard = ([{ id, photo, cost, brand, name, color, sizes }]) => {
         id,
         colorId,
         sizeId,
-        count: 1
+        count: 1,
       };
       cart.push(cartItem);
     }
@@ -207,7 +207,7 @@ const renderItemCard = ([{ id, photo, cost, brand, name, color, sizes }]) => {
 };
 
 const itemPage = () => {
-  if (!checkLocation("card-good.html")) {
+  if (!checkLocation('card-good.html')) {
     return;
   }
 
@@ -219,7 +219,7 @@ const itemPage = () => {
 const getCart = () => {
   const storedCartJSON = localStorage.getItem(CART);
   if (storedCartJSON) {
-    JSON.parse(storedCartJSON).forEach((item) => cart.push(item));
+    JSON.parse(storedCartJSON).forEach(item => cart.push(item));
   }
   console.log(cart);
 };

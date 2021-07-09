@@ -1,15 +1,15 @@
+const dbURL = './db/db.json';
+
 // model
-export const getItemsByKey = (items, val, key = "category") =>
-  items.filter((item) => item[key] === val);
+export const getItemsByKey = (items, val, key = 'category') => items.filter(item => item[key] === val);
 
 // db request
-export const getData = async (url) => {
+export const getData = async url => {
   const res = await fetch(url);
   if (res.ok) {
     return res.json();
-  } else {
-    throw new Error(`${res.status}: ${res.statusText}`);
   }
+  throw new Error(`${res.status}: ${res.statusText}`);
 };
 
 export const getGoods = async (handler, val, url = dbURL) => {
@@ -17,7 +17,7 @@ export const getGoods = async (handler, val, url = dbURL) => {
     const goodsAll = await getData(url);
 
     if (!val) {
-      return handler(goods);
+      return handler(goodsAll);
     }
 
     handler(getItemsByKey(goodsAll, val));
@@ -29,7 +29,7 @@ export const getGoods = async (handler, val, url = dbURL) => {
 export const getOne = async (handler, val, url = dbURL) => {
   try {
     const data = await getData(url);
-    handler(getItemsByKey(data, val, "id"));
+    handler(getItemsByKey(data, val, 'id'));
   } catch (err) {
     console.warn(err);
   }
