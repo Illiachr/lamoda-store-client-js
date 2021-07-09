@@ -1,8 +1,7 @@
-import { cart } from '../cart/cart';
+import { cart, CART_ITEM_NAME } from '../cart/cart';
 import CURRENCY from '../helpers/intl.helper';
 import {
   BTN_BUY,
-  CART,
   COLOR_BTN,
   COLOR_LIST,
   ITEM_BRAND,
@@ -109,7 +108,7 @@ const renderItemCard = ([{
       };
       cart.push(cartItem);
     }
-    localStorage.setItem(CART, JSON.stringify(cart));
+    localStorage.setItem(CART_ITEM_NAME, JSON.stringify(cart));
   });
 };
 
