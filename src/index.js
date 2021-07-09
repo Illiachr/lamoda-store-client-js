@@ -1,3 +1,8 @@
+import "./index.html";
+import "./goods.html";
+import "./card-good.html";
+import "./scss/style.scss";
+
 const CART = "consumerCart";
 
 const CLS_NAMES = {
@@ -33,40 +38,6 @@ const cart = [];
 const eventHandlers = [];
 const dbURL = "./db.json";
 const currency = "&#8372;";
-
-// const cart = [
-//   {
-//     id: "CD32D6F8",
-//     category: "women",
-//     brand: "New Balance",
-//     name: "Леггинсы NB Essentials Botanical Legging",
-//     cost: 2999,
-//     sizes: ["40/42", "42/44", "44/46", "46/48", "48/50"],
-//     photo: "NE007EWMSTP9_14530060_1_v1.jpg",
-//     preview: "NE007EWMSTP9_14530060_1_v2.jpg"
-//   },
-//   {
-//     id: "B7F325C0",
-//     category: "women",
-//     brand: "Adidas",
-//     name: "Костюм спортивный W TS CO ENERGIZ",
-//     cost: 7999,
-//     sizes: ["40/42", "42/44", "46/48", "48/50", "52/54"],
-//     photo: "AD002EWLUHE3_13165507_1_v1.jpg",
-//     preview: "AD002EWLUHE3_13165507_1_v2.jpg"
-//   },
-//   {
-//     id: "5481519A",
-//     category: "women",
-//     brand: "Befree",
-//     name: "Топ Exclusive online",
-//     cost: 599,
-//     color: ["Черный", "Белый", "Хаки", "Бирюзовый", "Фиолетовый", "Розовый"],
-//     sizes: ["42", "44", "46", "48"],
-//     photo: "MP002XW06VXS_14089904_1.jpg",
-//     preview: "MP002XW06VXS_14089904_2.jpg"
-//   }
-// ];
 
 // utils
 
