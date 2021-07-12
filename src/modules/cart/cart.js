@@ -10,10 +10,26 @@ export const getCart = () => {
   }
 };
 
-export const cartDeleteOne = id => {
-  const temp = cartState.cart.filter(item => item.id !== id);
+export const cartDeleteById = id => {
+  const temp = cartState.cart.filter((item, i) => i !== id);
   cartState.cart = [...temp];
   console.log(temp);
   storeCart(temp);
   getCart();
 };
+
+export const cartDeleteOne = (id, colorId, sizeId) => {
+  const temp = cartState.cart.filter(item => item.id !== id && item.colorId !== colorId && item.sizeId !== sizeId);
+  cartState.cart = [...temp];
+  console.log(temp);
+  storeCart(temp);
+  getCart();
+};
+
+export const resetCart = () => {
+  cartState.cart = [];
+  localStorage.removeItem(CART_ITEM_NAME);
+};
+
+export const cartCheckItem = (id, colorId, sizeId) => cartState.cart
+  .some(item => item.id === id && item.colorId === colorId && item.sizeId === sizeId);

@@ -31,10 +31,6 @@
     color: #fff;
     font-weight: 300;
 
-    & tr {
-        transition: all 0.3s ease;
-    }
-
     &__table-wrapper {
         overflow-y: auto;
         max-width: 100%;
@@ -88,6 +84,10 @@
         flex-grow: 1;
     }
 
+    &__btn-wrapper {
+        display: flex;
+    }
+
     &__btn-buy,
     &__btn-clear,
     &__btn-continue {
@@ -98,11 +98,19 @@
         border-radius: 3px;
         color: #fff;
         background-color: #2796FF;
-        box-shadow: 0 2px 8px 0 rgba(39, 150, 255, 0.6);
+        box-shadow: 0 2px 8px 0 rgba(117, 154, 191, 0.6);
         font-weight: 700;
         font-size: 16px;
         margin-bottom: 32px;
+        margin-right: 10px;
     }
+
+    &__btn-clear {
+        margin-right: 0;
+        background-color: #5f6b77;
+        box-shadow: 0 2px 8px 0 rgba(56, 80, 104, 0.6);
+    }
+
 
     &__btn-close {
         position: absolute;

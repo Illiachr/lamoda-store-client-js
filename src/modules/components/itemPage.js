@@ -1,4 +1,4 @@
-import { cartState, storeCart } from '../cart/cart';
+import { cartCheckItem, cartDeleteOne, cartState, storeCart } from '../cart/cart';
 import CURRENCY from '../helpers/intl.helper';
 import { BTN_BUY,
   COLOR_BTN,
@@ -16,8 +16,11 @@ import { BTN_BUY,
 import { getOne } from '../models/model.local.db';
 import { checkLocation, createElem, getLocationHash } from '../utils/utils';
 
-const selectClickHandler = (e, select) => {
+const addToCart = document.querySelector(BTN_BUY);
+
+const selectClickHandler = (e, select, i, arr) => {
   const { target } = e;
+  console.log(arr);
 
   const selectBtn = target.closest(SELECT);
   if (selectBtn) {
@@ -30,6 +33,25 @@ const selectClickHandler = (e, select) => {
     selectChoise.textContent = selectItem.textContent;
     selectChoise.dataset.idx = selectItem.dataset.idx;
     selectChoise.classList.remove(SELECT_OPEN);
+    const { colorId, sizeId } = [...arr].reduce((acc, elem) => {
+      const selectColor = elem.querySelector(COLOR_BTN);
+      const selectSize = elem.querySelector(SIZES_BTN);
+      if (selectColor) {
+        acc.colorId = selectColor.dataset.idx;
+      }
+      if (selectSize) {
+        acc.sizeId = selectSize.dataset.idx;
+      }
+      return acc;
+    }, {});
+    const idx = getLocationHash();
+    const inCart = cartState.cart
+      .some(item => item.id === idx && item.colorId === colorId && item.sizeId === sizeId);
+    if (inCart) {
+      addToCart.classList.add('hide');
+    } else {
+      addToCart.classList.remove('hide');
+    }
   }
 };
 
@@ -63,7 +85,7 @@ const renderItemCard = ([{
   const colorSelectBtn = document.querySelector(COLOR_BTN);
   const sizesSelectBtn = document.querySelector(SIZES_BTN);
   const selectWrappers = document.querySelectorAll(SELECT_WRAPPER);
-  const addToCart = document.querySelector(BTN_BUY);
+  const cardWrap = document.querySelector('.card-good__wrapper');
 
   itemImage.src = `goods-image/${photo}`;
   itemImage.alt = `${brand} ${name}`;
@@ -87,25 +109,53 @@ const renderItemCard = ([{
     colorSelectBtn.style.display = 'none';
   }
 
-  selectWrappers.forEach(select => select.addEventListener('click', e => selectClickHandler(e, select)));
+  const idx = getLocationHash();
+  const colorIdx = colorSelectBtn.dataset.idx;
+  const sizeIdx = sizesSelectBtn.dataset.idx;
+  const inCart = cartCheckItem(idx, colorIdx, sizeIdx);
+  if (inCart) {
+    addToCart.classList.add('hide');
+  }
 
-  addToCart.addEventListener('click', () => {
-    const colorId = colorSelectBtn.dataset.idx || null;
-    const sizeId = sizesSelectBtn.dataset.idx || null;
-    const cartItemIdx = cartState.cart.findIndex(
-      item => item.id === id && item.colorId === colorId && item.sizeId === sizeId
-    );
-    if (cartItemIdx >= 0 && cartState.cart.length > 0) {
-      cartState.cart[cartItemIdx].count += 1;
-    } else {
-      cartState.cart.push({
-        id,
-        colorId,
-        sizeId,
-        count: 1
-      });
+  selectWrappers.forEach(
+    (select, i, arr) => select.addEventListener('click', e => selectClickHandler(e, select, i, arr))
+  );
+
+  cardWrap.addEventListener('click', e => {
+    const { target } = e;
+
+    const showCart = target.closest('.card-good__show-cart');
+
+    if (showCart) {
+      console.log(showCart);
     }
-    storeCart();
+
+    const cancelItem = target.closest('.card-good__cancel');
+    if (cancelItem) {
+      const colorId = colorSelectBtn.dataset.idx || null;
+      const sizeId = sizesSelectBtn.dataset.idx || null;
+      cartDeleteOne(getLocationHash(), colorId, sizeId);
+    }
+
+    if (target === addToCart) {
+      const colorId = colorSelectBtn.dataset.idx || null;
+      const sizeId = sizesSelectBtn.dataset.idx || null;
+      const cartItemIdx = cartState.cart.findIndex(
+        item => item.id === id && item.colorId === colorId && item.sizeId === sizeId
+      );
+      if (cartItemIdx >= 0 && cartState.cart.length > 0) {
+        cartState.cart[cartItemIdx].count += 1;
+      } else {
+        cartState.cart.push({
+          id,
+          colorId,
+          sizeId,
+          count: 1
+        });
+      }
+      storeCart();
+      addToCart.classList.add('hide');
+    }
   });
 };
 

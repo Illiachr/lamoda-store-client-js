@@ -6,6 +6,7 @@ export const CART_LIST = '.cart__list-goods';
 export const CART_CLOSE = '.cart__btn-close';
 export const CART_BTN_DELETE = 'btn-delete';
 export const CART_BTN_CLEAR = 'cart__btn-clear';
+export const CART_BTN_CONTINUE = '.cart__btn-continue';
 export const CART_TOTAL = '.cart__total-cost';
 export const GOODS_TITLE = '.goods__title';
 export const GOODS_LIST = '.goods__list';

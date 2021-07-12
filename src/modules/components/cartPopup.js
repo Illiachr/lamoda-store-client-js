@@ -1,21 +1,23 @@
-import { cartState, cartDeleteOne } from '../cart/cart';
+import { cartState, cartDeleteById, resetCart } from '../cart/cart';
 import CURRENCY from '../helpers/intl.helper';
-import { CART_BTN, CART_BTN_DELETE, CART_CLOSE, CART_LIST, CART_OPEN, CART_OVERLAY } from '../helpers/name.helper';
+import { CART_BTN, CART_BTN_CLEAR, CART_BTN_CONTINUE,
+  CART_BTN_DELETE, CART_CLOSE, CART_LIST, CART_OPEN, CART_OVERLAY } from '../helpers/name.helper';
 import { getOrder } from '../models/model.local.db';
 import { disableScroll, enableScroll } from '../utils/utils';
 
 const eventHandlers = [];
 
-const crateListItem = ({ id, brand, name, color, sizes, cost, count }, idx) => `
-  <td>${idx + 1}</td>
-  <td>${brand} ${name}</td>
-  <td>${color || '-'}</td>
-  <td>${sizes || '-'}</td>
-  <td>${count}</td>
-  <td>${cost} ${CURRENCY}</td>
-  <td>${cost * count} ${CURRENCY}</td>
-  <td><button class=${CART_BTN_DELETE} data-idx=${id}>&times;</button></td>
-`;
+const crateListItem = ({ brand, name, color, sizes, cost, count }, idx) => `
+  <tr>
+    <td>${idx + 1}</td>
+    <td>${brand} ${name}</td>
+    <td>${color || '-'}</td>
+    <td>${sizes || '-'}</td>
+    <td>${count}</td>
+    <td>${cost} ${CURRENCY}</td>
+    <td>${cost * count} ${CURRENCY}</td>
+    <td><button class=${CART_BTN_DELETE} data-idx=${idx}>&times;</button></td>
+  </tr>`;
 
 const renderRows = (data = []) => {
   const cartList = document.querySelector(CART_LIST);
@@ -44,8 +46,14 @@ export default () => {
       handler => handler.type === 'cartClick'
     );
 
-    const closeBtn = target.closest(CART_CLOSE);
-    if (closeBtn || target === cartOverlay) {
+    if (target.matches(`.${CART_BTN_CLEAR}`)) {
+      resetCart();
+      renderRows();
+    }
+
+    if (target.closest(CART_CLOSE) ||
+        target === cartOverlay ||
+        target.matches(CART_BTN_CONTINUE)) {
       cartOverlay.classList.remove(CART_OPEN);
       cartClick.unsub();
       enableScroll();
@@ -53,7 +61,7 @@ export default () => {
 
     const btnDelete = target.closest(`.${CART_BTN_DELETE}`);
     if (btnDelete) {
-      cartDeleteOne(btnDelete.dataset.idx);
+      cartDeleteById(btnDelete.dataset.idx);
       getOrder(renderRows, cartState.cart);
     }
   };
@@ -70,4 +78,8 @@ export default () => {
   document
     .querySelector(CART_BTN)
     .addEventListener('click', cartBtnClickHandler);
+  const showCart = document.querySelector('.card-good__show-cart');
+  if (showCart) {
+    showCart.addEventListener('click', cartBtnClickHandler);
+  }
 };
