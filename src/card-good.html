@@ -164,14 +164,15 @@
         <div class="cart">
             <h2 class="cart__title">Корзина</h2>
             <div class="cart__table-wrapper">
-
                 <table class="cart__table">
                     <colgroup class="cart__col">
                         <col class="cart__col-number">
                         <col class="cart__col-name">
                         <col class="cart__col-color">
                         <col class="cart__col-size">
+                        <col class="cart__col-count">
                         <col class="cart__col-price">
+                        <col class="cart__col-total-price">
                         <col class="cart__col-delete">
                     </colgroup>
                     <thead>
@@ -180,35 +181,13 @@
                             <th>Наименование</th>
                             <th>Цвет</th>
                             <th>Размер</th>
+                            <th>Количество</th>
                             <th>Цена</th>
+                            <th>Сумма</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody class="cart__list-goods">
-                        <tr>
-                            <td>1</td>
-                            <td>New Balance Леггинсы NB Essentials Botanical Legging</td>
-                            <td>-</td>
-                            <td>42/44</td>
-                            <td>2999 &#8381;</td>
-                            <td><button class="btn-delete">&times;</button></td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Adidas Костюм спортивный W TS CO ENERGIZ</td>
-                            <td>-</td>
-                            <td>42/44</td>
-                            <td>7999 &#8381;</td>
-                            <td><button class="btn-delete">&times;</button></td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Befree Топ Exclusive online</td>
-                            <td>Фиолетовый</td>
-                            <td>42</td>
-                            <td>599 &#8381;</td>
-                            <td><button class="btn-delete">&times;</button></td>
-                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
@@ -220,11 +199,10 @@
 
                             </th>
                             <th>Итого:</th>
-                            <th class="cart__total-cost" colspan="2">11597 &#8381;</th>
+                            <th class="cart__total-cost" colspan="4">11597 &#8381;</th>
                         </tr>
                     </tfoot>
                 </table>
-
             </div>
             <button class="cart__btn-buy">Оформить</button>
             <button class="cart__btn-close"></button>

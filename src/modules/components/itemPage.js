@@ -1,7 +1,6 @@
-import { cart, CART_ITEM_NAME } from '../cart/cart';
+import { cartState, storeCart } from '../cart/cart';
 import CURRENCY from '../helpers/intl.helper';
-import {
-  BTN_BUY,
+import { BTN_BUY,
   COLOR_BTN,
   COLOR_LIST,
   ITEM_BRAND,
@@ -13,8 +12,7 @@ import {
   SELECT_OPEN,
   SELECT_WRAPPER,
   SIZES_BTN,
-  SIZES_LIST
-} from '../helpers/name.helper';
+  SIZES_LIST } from '../helpers/name.helper';
 import { getOne } from '../models/model.local.db';
 import { checkLocation, createElem, getLocationHash } from '../utils/utils';
 
@@ -94,21 +92,20 @@ const renderItemCard = ([{
   addToCart.addEventListener('click', () => {
     const colorId = colorSelectBtn.dataset.idx || null;
     const sizeId = sizesSelectBtn.dataset.idx || null;
-    const cartItemIdx = cart.findIndex(
+    const cartItemIdx = cartState.cart.findIndex(
       item => item.id === id && item.colorId === colorId && item.sizeId === sizeId
     );
-    if (cartItemIdx >= 0 && cart.length > 0) {
-      cart[cartItemIdx].count += 1;
+    if (cartItemIdx >= 0 && cartState.cart.length > 0) {
+      cartState.cart[cartItemIdx].count += 1;
     } else {
-      const cartItem = {
+      cartState.cart.push({
         id,
         colorId,
         sizeId,
         count: 1
-      };
-      cart.push(cartItem);
+      });
     }
-    localStorage.setItem(CART_ITEM_NAME, JSON.stringify(cart));
+    storeCart();
   });
 };
 

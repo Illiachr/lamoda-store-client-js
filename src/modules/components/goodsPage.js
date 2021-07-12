@@ -1,16 +1,9 @@
 import CURRENCY from '../helpers/intl.helper';
 import { GOODS_ITEM, GOODS_LIST, GOODS_TITLE } from '../helpers/name.helper';
 import { getGoods } from '../models/model.local.db';
-import {
-  checkLocation,
-  createElem,
-  getLocationHash,
-  setTitle
-} from '../utils/utils';
+import { checkLocation, createElem, getLocationHash, setTitle } from '../utils/utils';
 
-const goodInfo = ({
-  id, preview, cost, brand, name, sizes
-}) => `
+const goodInfo = ({ id, preview, cost, brand, name, sizes }) => `
   <article class="good">
     <a class="good__link-img" href="card-good.html#${id}">
       <img class="good__img" src="goods-image/${preview}" alt="${brand} ${name}">
